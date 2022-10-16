@@ -1,7 +1,6 @@
 <?php
 namespace App\Database\Models;
 
-use App\Database\Config\Connection;
 
 class User extends Model  {
     private $id,$first_name,$last_name,$email,$phone,$password,$gender,$image,
