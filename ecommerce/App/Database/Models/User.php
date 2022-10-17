@@ -121,7 +121,7 @@ class User extends Model  {
      */ 
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = password_hash($password,PASSWORD_BCRYPT);
 
         return $this;
     }
@@ -265,4 +265,41 @@ class User extends Model  {
 
         return $this;
     }
+
+    public function create() :bool
+    {
+        $query = "INSERT INTO users (first_name,last_name,password,email,phone,gender,verification_code) 
+        VALUES (? , ? , ? , ? , ? , ?, ?)";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('sssssii',$this->first_name,$this->last_name,$this->password,
+        $this->email,$this->phone,$this->gender,$this->verification_code); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
+
+    public function checkCode() :?\mysqli_result
+    {
+        $query = "SELECT * FROM users WHERE email = ? AND verification_code = ?";
+        $stmt = $this->conn->prepare($query);
+        if(! $stmt ){
+            return $stmt;
+        }
+        $stmt->bind_param('si',$this->email,$this->verification_code);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function verified() :bool
+    {
+        $query = "UPDATE users SET email_verified_at = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('ss',$this->email_verified_at,$this->email); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
+
 }

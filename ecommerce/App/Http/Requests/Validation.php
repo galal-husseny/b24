@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Requests;
 
+use App\Database\Models\Model;
+
 class Validation {
     private string $input; // 
     private string $inputName; // 
@@ -28,6 +30,22 @@ class Validation {
         return $this;
     }
 
+    public function digits(int $digits) :self
+    {
+        if(strlen($this->input)  !== $digits){
+            $this->errors[$this->inputName][__FUNCTION__] = "{$this->inputName} must be {$digits} digits";
+        }   
+        return $this;
+    }
+
+    public function  numeric() :self
+    {
+        if(! is_numeric($this->input)){
+            $this->errors[$this->inputName][__FUNCTION__] = "{$this->inputName} must be a number";
+        }   
+        return $this;
+    }
+
     public function regex(string $pattern,$message=null)  :self
     {
         if(! preg_match($pattern,$this->input)){
@@ -36,14 +54,34 @@ class Validation {
         return $this;
     }
 
-    public function unique()  :self
+    public function unique($table,$column)  :self
     {
-        // database
+        $query = "SELECT * FROM {$table} WHERE {$column} = ?";
+        $model = new Model;
+        $stmt = $model->conn->prepare($query);
+        if(! $stmt){
+            $this->errors[$this->inputName][__FUNCTION__] = "Something went wrong";
+        }   
+        $stmt->bind_param('s',$this->input);
+        $stmt->execute();
+        if($stmt->get_result()->num_rows == 1){
+            $this->errors[$this->inputName][__FUNCTION__] = "{$this->inputName} Already Exists";
+        }
         return $this;
     }
-    public function exists()  :self
+    public function exists($table,$column)  :self
     {
-        // database
+        $query = "SELECT * FROM {$table} WHERE {$column} = ?";
+        $model = new Model;
+        $stmt = $model->conn->prepare($query);
+        if(! $stmt){
+            $this->errors[$this->inputName][__FUNCTION__] = "Something went wrong";
+        }   
+        $stmt->bind_param('s',$this->input);
+        $stmt->execute();
+        if($stmt->get_result()->num_rows == 0){
+            $this->errors[$this->inputName][__FUNCTION__] = "{$this->inputName} Not Exist";
+        }
          return $this;
     }
 

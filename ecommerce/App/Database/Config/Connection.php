@@ -7,7 +7,7 @@ class Connection {
     private $hostPassword = "";
     private $database = "b24_ecommerce";
     private $port = 3307;
-    public $conn;
+    public \mysqli $conn;
     public function __construct() {
         $this->conn = new \mysqli($this->hostName,$this->hostUserName,$this->hostPassword,$this->database,$this->port);
         // Check connection
