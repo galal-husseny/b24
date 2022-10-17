@@ -302,4 +302,16 @@ class User extends Model  {
         return $stmt->execute(); // run query
     }
 
+    public function getUserByEmail() :?\mysqli_result
+    {
+        $query = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->conn->prepare($query);
+        if(! $stmt ){
+            return $stmt;
+        }
+        $stmt->bind_param('s',$this->email);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
 }

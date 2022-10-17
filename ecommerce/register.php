@@ -2,9 +2,11 @@
 
 use App\Database\Models\User;
 use App\Http\Requests\Validation;
+use App\Mail\VerificationCode;
 
 $title = "Register";
 include "layouts/header.php";
+include "App/Http/middlewares/guest.php";
 include "layouts/navbar.php";
 include "layouts/breadcrumb.php";
 
@@ -27,8 +29,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
        ->setVerification_code($verificationCode);
        if($user->create()){
             // send mail
-            $_SESSION['verification-email'] = $_POST['email'];
-            header('location:verification-code.php');die;
+            $body = "<p> Hello {$_POST['first_name']} </p> 
+            <p> Your Verification Code :<b style='color:blue;'> {$verificationCode} </b> </p>
+            <p> Ecommerce Team.</p>";
+            $verificationCodeMail = new VerificationCode($_POST['email'],"Verification Code Mail",$body);
+            if($verificationCodeMail->send()){
+                $_SESSION['verification-email'] = $_POST['email'];
+                header('location:verification-code.php');die;
+            }else{
+                $error = "<div class='alert alert-danger text-center'> Please Try Again Later </div>";
+            }
+            
        }else{
             $error = "<div class='alert alert-danger text-center'> Something went wrong </div>";
        }
@@ -66,8 +77,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                                         <input type="password" name="password_confirmation" placeholder="Password Confirmation" >
                                         <?= $validation->getErrorMessage('password_confirmation') ?>
                                         <select name="gender" class="form-control" id="">
-                                            <option <?= $_POST['gender'] == '1' ? 'selected' : '' ?> value="1">Male</option>
-                                            <option <?= $_POST['gender'] == '0' ? 'selected' : '' ?> value="0">Female</option>
+                                            <option <?= (isset($_POST['gender']) && $_POST['gender'] == '1') ? 'selected' : '' ?> value="1">Male</option>
+                                            <option <?= (isset($_POST['gender']) && $_POST['gender'] == '0') ? 'selected' : '' ?> value="0">Female</option>
                                         </select>
                                         <?= $validation->getErrorMessage('gender') ?>
                                         <div class="button-box mt-5">

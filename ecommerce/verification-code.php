@@ -8,7 +8,7 @@ include "layouts/header.php";
 $validation = new Validation;
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $validation->setInput($_POST['verification_code'])->setInputName('verification_code')->required()->numeric()->digits(5);
+    $validation->setInput($_POST['verification_code'] ?? "")->setInputName('verification_code')->required()->numeric()->digits(5);
     if(empty($validation->getErrors())){
         $user = new User;
         $user->setEmail($_SESSION['verification-email'])->setVerification_code($_POST['verification_code']);
