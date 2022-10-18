@@ -1,7 +1,17 @@
-<?php 
+<?php
+
+use App\Database\Models\User;
+
 ob_start();
 session_start();
 include "vendor/autoload.php";
+if(isset($_COOKIE['remember_me']) && ! isset($_SESSION['user'])){
+    $user = new User;
+    $user->setEmail($_COOKIE['remember_me']);
+    $userData = $user->getUserByEmail()->fetch_object();
+    $_SESSION['user'] =  $userData;
+}
+
 ?>
 <!doctype html>
 <html class="no-js" lang="zxx">

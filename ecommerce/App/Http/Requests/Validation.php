@@ -7,9 +7,13 @@ class Validation {
     private string $input; // 
     private string $inputName; // 
     private array $errors = [];
+    private array $restrictedValues = [
+        null,'',[],
+    ];
+    private array $file;
     public function required() :self
     {
-        if(empty($this->input)){
+        if(in_array($this->input,$this->restrictedValues)){
             $this->errors[$this->inputName][__FUNCTION__] = "{$this->inputName} is required";
         }
         return $this;
@@ -100,6 +104,23 @@ class Validation {
         return $this;
     }
 
+    public function size(int $maxSize) :self
+    {
+        if($this->file['size'] > $maxSize){
+            $this->errors[$this->inputName][__FUNCTION__] = "Max Size : {$maxSize} Bytes";
+        }
+        return $this;
+    }
+
+    public function extensions(array $availableExtensions) :self
+    {
+        $fileExtension = explode('/',$this->file['type'])[1]; //png
+        if(! in_array($fileExtension,$availableExtensions)){
+            $this->errors[$this->inputName][__FUNCTION__] = "Allowed Extensions are:" . implode(', ' ,$availableExtensions);
+        }
+        return $this;
+    }
+
     /**
      * Set the value of input
      *
@@ -146,5 +167,20 @@ class Validation {
     {
         return "<p class='text-danger font-weight-bold' > ".$this->getError($inputName)." </p>";
     }
+
+    /**
+     * Set the value of file
+     *
+     * @return  self
+     */ 
+    public function setFile($file)
+    {
+        $this->file = $file;
+
+        return $this;
+    }
+
+
+    
 }
 // SOLID

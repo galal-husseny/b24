@@ -35,6 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             $verificationCodeMail = new VerificationCode($_POST['email'],"Verification Code Mail",$body);
             if($verificationCodeMail->send()){
                 $_SESSION['verification-email'] = $_POST['email'];
+                $_SESSION['page'] = "register";
                 header('location:verification-code.php');die;
             }else{
                 $error = "<div class='alert alert-danger text-center'> Please Try Again Later </div>";

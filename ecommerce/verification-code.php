@@ -17,8 +17,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if($result->num_rows == 1){
                 $user->setEmail_verified_at(date('Y-m-d H:i:s'));
                 if($user->verified()){
-                    $success = "<div class='alert alert-success text-center'> Correct Verification Code , You will be redirected to login page shortly ... </div>";
-                    header('refresh:3;url=login.php');
+                    if($_SESSION['page'] == 'register'){
+                        unset($_SESSION['verification-email']);
+                        unset($_SESSION['page']);
+                        $success = "<div class='alert alert-success text-center'> Correct Verification Code , You will be redirected to login page shortly ... </div>";
+                        header('refresh:3;url=login.php');
+                    }elseif($_SESSION['page'] == 'forget'){
+                        $success = "<div class='alert alert-success text-center'> Correct Verification Code , You will be redirected to reset your password shortly ... </div>";
+                        unset($_SESSION['page']);
+                        header('refresh:3;url=reset-password.php');
+                    }elseif($_SESSION['page'] == 'login'){
+                        unset($_SESSION['verification-email']);
+                        unset($_SESSION['page']);
+                        $success = "<div class='alert alert-success text-center'> Correct Verification Code , You will be redirected to Your Account shortly ... </div>";
+                        $_SESSION['user'] = $result->fetch_object();
+                        header('refresh:3;url=my-account.php');
+                    }
+                    
                 }else{
                     $error = "<div class='alert alert-danger text-center'> Something went wrong </div>";
                 }

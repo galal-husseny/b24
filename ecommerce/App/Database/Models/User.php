@@ -279,7 +279,7 @@ class User extends Model  {
         return $stmt->execute(); // run query
     }
 
-    public function checkCode() :?\mysqli_result
+    public function checkCode() :false|\mysqli_result
     {
         $query = "SELECT * FROM users WHERE email = ? AND verification_code = ?";
         $stmt = $this->conn->prepare($query);
@@ -302,7 +302,7 @@ class User extends Model  {
         return $stmt->execute(); // run query
     }
 
-    public function getUserByEmail() :?\mysqli_result
+    public function getUserByEmail() :false|\mysqli_result
     {
         $query = "SELECT * FROM users WHERE email = ?";
         $stmt = $this->conn->prepare($query);
@@ -314,4 +314,45 @@ class User extends Model  {
         return $stmt->get_result();
     }
 
+
+    public function updateCode() :bool
+    {
+        $query = "UPDATE users SET verification_code = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('ss',$this->verification_code,$this->email); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
+    public function updatePassword() :bool
+    {
+        $query = "UPDATE users SET password = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('ss',$this->password,$this->email); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
+    public function updateImage() :bool
+    {
+        $query = "UPDATE users SET image = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('ss',$this->image,$this->email); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
+    public function update() :bool
+    {
+        $query = "UPDATE users SET first_name = ? , last_name = ? , gender = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($query); // check query syntax
+        if(! $stmt){
+            return $stmt; // false
+        }
+        $stmt->bind_param('ssis',$this->first_name,$this->last_name,$this->gender,$this->email); // pass paramerters 
+        return $stmt->execute(); // run query
+    }
 }
