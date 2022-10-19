@@ -5,7 +5,7 @@ class Connection {
     private $hostName = "localhost";
     private $hostUserName = "root";
     private $hostPassword = "";
-    private $database = "b24_ecommerce";
+    private $database = "ecommerce";
     private $port = 3307;
     public \mysqli $conn;
     public function __construct() {

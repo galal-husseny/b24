@@ -4,8 +4,9 @@ namespace App\Database\Models;
 
 class Product extends Model {
     private $id,$name_en,$name_ar,$price,$code,$quantity,$details_en,$details_ar,$status,
-    $brand_id,$subcategory_id,$image,$created_at,$updated_at;
-
+    $brand_id,$subcategory_id,$category_id,$image,$created_at,$updated_at;
+    private const ACTIVE = 1;
+    private const NOTACTIVE = 0;
     /**
      * Get the value of id
      */ 
@@ -284,5 +285,91 @@ class Product extends Model {
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public function get()
+    {
+        $query = "SELECT id,name_en,price,image,details_en FROM products WHERE status = " . self::ACTIVE;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function getProductsBySubcategory()
+    {
+        $query = "SELECT id,name_en,price,image,details_en FROM products WHERE status = " . self::ACTIVE 
+        . ' AND subcategory_id = ?';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i',$this->subcategory_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function getProductsByCategory()
+    {
+        $query = "SELECT id,name_en,price,image,details_en FROM product_details WHERE status = " . self::ACTIVE 
+        . ' AND category_id = ?';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i',$this->category_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+    public function getProductsByBrand()
+    {
+        $query = "SELECT id,name_en,price,image,details_en FROM products WHERE status = " . self::ACTIVE 
+        . ' AND brand_id = ?';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i',$this->brand_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+    
+
+    public function getProduct()
+    {
+        $query = "SELECT * FROM product_details WHERE status = " . self::ACTIVE . ' AND id = ?';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i',$this->id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    /**
+     * Get the value of category_id
+     */ 
+    public function getCategory_id()
+    {
+        return $this->category_id;
+    }
+
+    /**
+     * Set the value of category_id
+     *
+     * @return  self
+     */ 
+    public function setCategory_id($category_id)
+    {
+        $this->category_id = $category_id;
+
+        return $this;
+    }
+
+    public function getReviews()
+    {
+        $query = "SELECT
+                CONCAT(`users`.`first_name` , ' ' , `users`.`last_name`) AS `full_name`,
+                `reviews`.rate,
+                `reviews`.`comment`,
+                `reviews`.`created_at`
+            FROM
+                `reviews`
+            JOIN `users`
+            ON `users`.`id` = `reviews`.`user_id`
+            WHERE
+                `reviews`.`product_id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i',$this->id);
+        $stmt->execute();
+        return $stmt->get_result();
     }
 }
