@@ -23,3 +23,5 @@ Route::get('dashboard',[DashboardController::class,'index']);
 Route::get('dashboard/products',[ProductsController::class,'index']);
 Route::get('dashboard/products/create',[ProductsController::class,'create']);
 Route::get('dashboard/products/edit/{id}',[ProductsController::class,'edit']);
+Route::post('dashboard/products/store',[ProductsController::class,'store']);
+

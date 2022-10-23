@@ -10,6 +10,17 @@
 
 @section('content')
     <div class="col-12">
+        @if (session('success'))
+            <div class="alert alert-success text-center">
+                {{ session('success') }}
+            </div>
+        @elseif(session('error'))
+            <div class="alert alert-danger text-center">
+                {{ session('error') }}
+            </div>
+        @endif
+    </div>
+    <div class="col-12">
         <div class="card">
             <!-- /.card-header -->
             <div class="card-body">
@@ -30,16 +41,16 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
-                                <td>{{$product->id}}</td>
-                                <td>{{$product->name_en}} - {{ $product->name_ar }}</td>
-                                <td>{{$product->code}}</td>
-                                <td>{{$product->price}}</td>
-                                <td>{{$product->quantity}}</td>
-                                <td>{{$product->status}}</td>
-                                <td>{{$product->created_at}}</td>
-                                <td>{{$product->updated_at}}</td>
+                                <td>{{ $product->id }}</td>
+                                <td>{{ $product->name_en }} - {{ $product->name_ar }}</td>
+                                <td>{{ $product->code }}</td>
+                                <td>{{ $product->price }}</td>
+                                <td>{{ $product->quantity }}</td>
+                                <td>{{ $product->status }}</td>
+                                <td>{{ $product->created_at }}</td>
+                                <td>{{ $product->updated_at }}</td>
                                 <td>
-                                    <a href="{{ asset('dashboard/products/edit/'.$product->id) }}"
+                                    <a href="{{ asset('dashboard/products/edit/' . $product->id) }}"
                                         class="btn btn-outline-primary">Edit</a>
                                     <a href="#" class="btn btn-outline-danger">Delete</a>
                                 </td>
