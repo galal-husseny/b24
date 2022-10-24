@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProductsController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('dashboard')->name('dashboard')->group(function(){
+Route::prefix('dashboard')->name('dashboard')->middleware(['auth','verified'])->group(function(){
     Route::get('/',[DashboardController::class,'index']);
     Route::prefix('products')->name('.products.')->controller(ProductsController::class)->group(function(){
         Route::get('/','index')->name('index');
@@ -30,3 +31,7 @@ Route::prefix('dashboard')->name('dashboard')->group(function(){
         Route::delete('/delete/{id}','delete')->name('delete');
     });
 });
+
+Auth::routes(['verify' => true]);
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth','verified']);
