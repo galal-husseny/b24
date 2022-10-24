@@ -16,7 +16,7 @@
 @endif
 </div> --}}
     <div class="col-12">
-        <form action="{{asset('dashboard/products/store')}}" method="post" enctype="multipart/form-data">
+        <form action="{{route('dashboard.products.store')}}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="form-row my-2">
                 <div class="col-6">
@@ -71,6 +71,7 @@
                 <div class="col-4">
                     <label for="brand_id">Brand</label>
                     <select name="brand_id" id="brand_id" class="form-control">
+                        <option value=""> No Brand </option>
                         @foreach ($brands as $brand)
                             <option @selected(old('brand_id') == $brand->id) value="{{$brand->id}}">{{$brand->name_en}}</option>
                         @endforeach

@@ -19,9 +19,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('dashboard',[DashboardController::class,'index']);
-Route::get('dashboard/products',[ProductsController::class,'index']);
-Route::get('dashboard/products/create',[ProductsController::class,'create']);
-Route::get('dashboard/products/edit/{id}',[ProductsController::class,'edit']);
-Route::post('dashboard/products/store',[ProductsController::class,'store']);
-
+Route::prefix('dashboard')->name('dashboard')->group(function(){
+    Route::get('/',[DashboardController::class,'index']);
+    Route::prefix('products')->name('.products.')->controller(ProductsController::class)->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('/create','create')->name('create');
+        Route::get('/edit/{id}','edit')->name('edit');
+        Route::post('/store','store')->name('store');
+        Route::put('/update/{id}','update')->name('update');
+        Route::delete('/delete/{id}','delete')->name('delete');
+    });
+});
