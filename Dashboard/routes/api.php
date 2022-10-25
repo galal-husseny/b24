@@ -22,11 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('dashboard')->group(function(){
     Route::prefix('products')->controller(ProductsController::class)->group(function(){
-        Route::get('/','index'); //     api/v1/dashboard/products/
-        Route::get('/create','create'); // api/v1/dashboard/products/create
-        Route::get('/edit/{id}','edit'); // api/v1/dashboard/products/edit/1
-        Route::post('/store','store'); //api/v1/dashboard/products/store
-        Route::put('/update/{id}','update');
-        Route::delete('/delete/{id}','delete');
+        Route::get('/','index');
+        Route::get('/create','create');
+        Route::get('/edit/{id}','edit');
+        Route::post('/store','store');
+        Route::post('/update/{id}','update');
+        Route::post('/delete/{id}','delete');
     });
 });

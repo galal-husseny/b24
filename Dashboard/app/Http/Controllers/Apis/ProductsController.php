@@ -10,20 +10,22 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Traits\ApiResponses;
 
 class ProductsController extends Controller
 {
+    use ApiResponses;
     public function index()
     {
        $products = Product::all();
-       return response()->json(compact('products'));
+       return $this->data(compact('products'));
     }
 
     public function create()
     {
         $brands =  Brand::select('id','name_en')->orderBy('name_en','ASC')->get();
         $subcategories = DB::table('subcategories')->select('name_en','id')->orderBy('name_en','ASC')->get(); // select => id , name_en , order by name_en DESC
-        return response()->json(compact('brands','subcategories'));
+        return $this->data(compact('brands','subcategories'));
     }
 
     public function edit($id)
@@ -31,7 +33,7 @@ class ProductsController extends Controller
         $product = Product::findOrFail($id);
         $brands =  Brand::select('id','name_en')->orderBy('name_en','ASC')->get();
         $subcategories = DB::table('subcategories')->select('name_en','id')->orderBy('name_en','ASC')->get(); // select => id , name_en , order by name_en DESC
-        return response()->json(compact('product','brands','subcategories'));
+        return $this->data(compact('product','brands','subcategories'));
     }
 
     public function store(StoreProductRequest $request)
@@ -43,7 +45,7 @@ class ProductsController extends Controller
         // create into db
         Product::create($data);
         // return redirect to page with success message
-        return response()->json(['message'=>'Product Created Successfully','status'=>true]);
+        return $this->success('Product Created Successfully',201);
     }
 
     public function update(UpdateProductRequest $request , $id)
@@ -58,7 +60,7 @@ class ProductsController extends Controller
             Media::delete(public_path('images\product\\'.$product->image));
         }
         $product->update($data);
-        return redirect()->route('dashboard.products.index')->with('success','Product Updated Successfully');
+        return $this->success('Product Updated Successfully');
 
     }
 
@@ -66,8 +68,12 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         Media::delete(public_path('images\product\\'.$product->image));
-        $product->delete();
-        return redirect()->route('dashboard.products.index')->with('success','Product Deleted Successfully');
+        try{
+            $product->delete();
+            return $this->success('Product Deleted Successfully');
+        }catch(\Exception $e){
+            return $this->error(['Products'=>'Product Couldn\'t deleted because this product has alot of reviews'],"Invalid Request");
+        }
     }
 
 }
