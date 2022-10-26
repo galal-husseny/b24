@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductsController extends Controller
 {
-    public function index()
+    public function index() 
     {
        $products = Product::all();
        return view('products.index',compact('products'));

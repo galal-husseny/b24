@@ -11,13 +11,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Traits\ApiResponses;
+use Illuminate\Support\Facades\App;
 
 class ProductsController extends Controller
 {
     use ApiResponses;
     public function index()
     {
-       $products = Product::all();
+       $products = Product::all('id','name_'.App::currentLocale() . ' AS name','price',
+       'quantity','code','details_'.App::currentLocale() . ' AS details');
        return $this->data(compact('products'));
     }
 
